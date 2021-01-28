@@ -1,3 +1,7 @@
 package com.example.grocery.data
 
-data class Receipt (val receiptID: Int)
+import java.util.*
+
+data class Receipt (val id: UUID = UUID.randomUUID(),
+                    var date: Date = Date(),
+                    var title: String = "")

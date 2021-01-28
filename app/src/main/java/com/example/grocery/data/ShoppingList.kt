@@ -1,3 +1,6 @@
 package com.example.grocery.data
 
-data class ShoppingList (val shoppingListID: Int)
+import java.util.*
+
+data class ShoppingList (val id: UUID = UUID.randomUUID(),
+                         var date: Date = Date())
