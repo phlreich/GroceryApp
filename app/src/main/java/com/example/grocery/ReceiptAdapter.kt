@@ -4,12 +4,14 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.grocery.data.Receipt
 import java.util.*
 
-class ReceiptAdapter(private var receipts: List<Receipt>) :
-    RecyclerView.Adapter<ReceiptAdapter.ReceiptViewHolder>() {
+class ReceiptAdapter() :
+        ListAdapter<Receipt, ReceiptAdapter.ReceiptViewHolder>(ReceiptDiffCallback) {
 
     // Describes an item view and its place within the RecyclerView
     class ReceiptViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -17,9 +19,9 @@ class ReceiptAdapter(private var receipts: List<Receipt>) :
         private val titleTextView: TextView = itemView.findViewById(R.id.receipt_title)
         private val dateTextView: TextView = itemView.findViewById(R.id.receipt_date)
 
-        fun bind(title: String, date: Date) {
-            titleTextView.text = title
-            dateTextView.text = date.toString()
+        fun bind(receipt: Receipt) {
+            titleTextView.text = receipt.title
+            dateTextView.text = receipt.date.toString()
         }
     }
 
@@ -32,13 +34,27 @@ class ReceiptAdapter(private var receipts: List<Receipt>) :
     }
 
     // Returns size of data list
-    override fun getItemCount(): Int {
-        return receipts.size
-    }
+//    override fun getItemCount(): Int {
+//        return receipts.size
+//    }
 
     // Displays data at a certain position
     override fun onBindViewHolder(holder: ReceiptViewHolder, position: Int) {
-        holder.bind(receipts[position].title, receipts[position].date)
+        val receipt = getItem(position)
+        holder.bind(receipt)
+    //holder.bind(receipts[position].title, receipts[position].date)
     }
 }
 
+object ReceiptDiffCallback : DiffUtil.ItemCallback<Receipt>() {
+    override fun areItemsTheSame(oldItem: Receipt, newItem: Receipt): Boolean {
+        return oldItem == newItem
+    }
+
+    override fun areContentsTheSame(oldItem: Receipt, newItem: Receipt): Boolean {
+        return oldItem.id == newItem.id
+    }
+}
+
+//class ReceiptAdapter(private var receipts: List<Receipt>) :
+//        RecyclerView.Adapter<ReceiptAdapter.ReceiptViewHolder>() {

@@ -5,13 +5,13 @@ import com.example.grocery.data.Receipt
 
 class ReceiptListViewModel : ViewModel() {
 
-    val receipts = mutableListOf<Receipt>()
+    private val receiptRepository = ReceiptRepository.get()
+    val receiptListLiveData = receiptRepository.getReceipts()
 
     init {
-        for (i in 0 until 100) {
-            val receipt = Receipt()
-            receipt.title = "Receipt #$i"
-            receipts += receipt
-        }
+        receiptRepository.addReceipt(Receipt(title = "test title", items = mutableListOf("joghurt", "brogurt"), prices = mutableListOf(0.13.toFloat(), 4.5.toFloat())))
     }
+
 }
+
+//Receipt(title = "test title", items = mutableListOf("joghurt", "brogurt"), prices = mutableListOf(0.13.toFloat(), 4.5.toFloat()))

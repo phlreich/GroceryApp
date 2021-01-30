@@ -1,9 +1,15 @@
 package com.example.grocery
 
 import android.os.Bundle
+import android.util.Log
+import android.view.View
+import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.Observer
+import com.example.grocery.data.Receipt
+
 
 class ReceiptListActivity : AppCompatActivity() {
 
@@ -16,9 +22,23 @@ class ReceiptListActivity : AppCompatActivity() {
 
 
         val receiptRecyclerView: RecyclerView = findViewById(R.id.receipt_recycler_view)
-        receiptRecyclerView.adapter = ReceiptAdapter(receiptListViewModel.receipts)
+        val receiptAdapter = ReceiptAdapter()
+
+        var receipts = emptyList<Receipt>()
+
+        receiptRecyclerView.adapter = receiptAdapter
+
+        receiptListViewModel.receiptListLiveData.observe(this, {
+            it?.let {
+                receiptAdapter.submitList(it as MutableList<Receipt>)
+            }
+        })
+
+
+
 
     }
+
 }
 
 
