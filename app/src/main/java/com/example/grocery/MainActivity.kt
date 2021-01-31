@@ -5,7 +5,7 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import android.widget.Button
-import androidx.camera.core.ImageCapture
+import com.example.grocery.receiptList.ReceiptListActivity
 
 
 class MainActivity : AppCompatActivity() {

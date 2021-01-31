@@ -1,4 +1,4 @@
-package com.example.grocery
+package com.example.grocery.receiptList
 
 import android.view.LayoutInflater
 import android.view.View
@@ -7,19 +7,29 @@ import android.widget.TextView
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.example.grocery.R
 import com.example.grocery.data.Receipt
-import java.util.*
 
-class ReceiptAdapter() :
+class ReceiptAdapter(private val onClick: (Receipt) -> Unit) :
         ListAdapter<Receipt, ReceiptAdapter.ReceiptViewHolder>(ReceiptDiffCallback) {
 
     // Describes an item view and its place within the RecyclerView
-    class ReceiptViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+    class ReceiptViewHolder(itemView: View, val onClick: (Receipt) -> Unit) : RecyclerView.ViewHolder(itemView) {
 
         private val titleTextView: TextView = itemView.findViewById(R.id.receipt_title)
         private val dateTextView: TextView = itemView.findViewById(R.id.receipt_date)
+        private var currentReceipt: Receipt? = null
 
+        init {
+            itemView.setOnClickListener {
+                currentReceipt?.let {
+                    onClick(it)
+                }
+            }
+        }
         fun bind(receipt: Receipt) {
+            currentReceipt = receipt
+
             titleTextView.text = receipt.title
             dateTextView.text = receipt.date.toString()
         }
@@ -30,7 +40,7 @@ class ReceiptAdapter() :
         val view = LayoutInflater.from(parent.context)
             .inflate(R.layout.list_item_receipt, parent, false)
 
-        return ReceiptViewHolder(view)
+        return ReceiptViewHolder(view, onClick)
     }
 
     // Returns size of data list

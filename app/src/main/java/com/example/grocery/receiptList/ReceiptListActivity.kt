@@ -1,15 +1,15 @@
-package com.example.grocery
+package com.example.grocery.receiptList
 
+import android.content.Intent
 import android.os.Bundle
-import android.util.Log
-import android.view.View
-import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.Observer
+import com.example.grocery.R
 import com.example.grocery.data.Receipt
+import com.example.grocery.receiptDetail.ReceiptDetailActivity
 
+const val RECEIPT_ID = "receipt id"
 
 class ReceiptListActivity : AppCompatActivity() {
 
@@ -22,7 +22,7 @@ class ReceiptListActivity : AppCompatActivity() {
 
 
         val receiptRecyclerView: RecyclerView = findViewById(R.id.receipt_recycler_view)
-        val receiptAdapter = ReceiptAdapter()
+        val receiptAdapter = ReceiptAdapter { receipt -> adapterOnClick(receipt) }
 
         var receipts = emptyList<Receipt>()
 
@@ -34,6 +34,12 @@ class ReceiptListActivity : AppCompatActivity() {
             }
         })
 
+    }
+
+    private fun adapterOnClick(receipt: Receipt) {
+        val intent = Intent(this, ReceiptDetailActivity::class.java)
+        intent.putExtra(RECEIPT_ID, receipt.id)
+        startActivity(intent)
     }
 
 }
