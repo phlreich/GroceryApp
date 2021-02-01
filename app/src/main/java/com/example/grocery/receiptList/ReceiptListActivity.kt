@@ -21,7 +21,7 @@ class ReceiptListActivity : AppCompatActivity() {
         setContentView(R.layout.activity_receipt_list)
 
 
-        val receiptRecyclerView: RecyclerView = findViewById(R.id.receipt_recycler_view)
+        val receiptRecyclerView: RecyclerView = findViewById(R.id.item_recycler_view)
         val receiptAdapter = ReceiptAdapter { receipt -> adapterOnClick(receipt) }
 
         var receipts = emptyList<Receipt>()
@@ -38,8 +38,15 @@ class ReceiptListActivity : AppCompatActivity() {
 
     private fun adapterOnClick(receipt: Receipt) {
         val intent = Intent(this, ReceiptDetailActivity::class.java)
-        intent.putExtra(RECEIPT_ID, receipt.id)
+        val id = receipt.id
+        intent.putExtra(RECEIPT_ID, id.toString())
         startActivity(intent)
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        //Log.d("LIST DESTROYED", "list activity was destroyed")
+        //TODO the viewmodel gets destroyed every time, and loads the entire database every time it spins back up - make this more efficient
     }
 
 }

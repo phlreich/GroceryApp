@@ -16,7 +16,7 @@ class ReceiptAdapter(private val onClick: (Receipt) -> Unit) :
     // Describes an item view and its place within the RecyclerView
     class ReceiptViewHolder(itemView: View, val onClick: (Receipt) -> Unit) : RecyclerView.ViewHolder(itemView) {
 
-        private val titleTextView: TextView = itemView.findViewById(R.id.receipt_title)
+        private val titleTextView: TextView = itemView.findViewById(R.id.item_name)
         private val dateTextView: TextView = itemView.findViewById(R.id.receipt_date)
         private var currentReceipt: Receipt? = null
 
