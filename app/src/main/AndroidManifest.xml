@@ -4,10 +4,10 @@
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.CAMERA" />
 
     <uses-feature android:name="android.hardware.camera.any" />
-
-    <uses-permission android:name="android.permission.CAMERA" />
 
     <application
         android:name=".GroceryApplication"
@@ -16,7 +16,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Grocery">
-        <activity android:name=".receiptDetail.ReceiptDetailActivity"></activity>
+
+        <activity android:name=".receiptDetail.ReceiptDetailActivity" />
         <activity android:name=".receiptList.ReceiptListActivity" />
         <activity android:name=".MainActivity">
             <intent-filter>
@@ -24,10 +25,13 @@
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-        </activity> <!-- automatically download the OCR model on install (no idea how this actually works) -->
+        </activity>
+
+
         <meta-data
             android:name="com.google.mlkit.vision.DEPENDENCIES"
             android:value="ocr" />
+
     </application>
 
 </manifest>
