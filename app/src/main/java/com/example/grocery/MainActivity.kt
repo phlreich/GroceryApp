@@ -12,7 +12,6 @@ import android.os.Bundle
 import android.provider.MediaStore
 import android.util.Log
 import android.widget.Button
-import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import com.example.grocery.data.Receipt
@@ -21,7 +20,6 @@ import com.google.mlkit.vision.common.InputImage
 import com.google.mlkit.vision.text.TextRecognition
 
 
-private const val TAG = "OCRStatus"
 class MainActivity : AppCompatActivity() {
 
     private val receiptRepository = ReceiptRepository.get()
@@ -77,9 +75,6 @@ class MainActivity : AppCompatActivity() {
                 val camera = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
                 startActivityForResult(camera, 0)
 
-
-
-
             } else if (options[item] == "Gallery") {
                 val gallery = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
                 startActivityForResult(gallery, 1)
@@ -109,7 +104,7 @@ class MainActivity : AppCompatActivity() {
         recognizer.process(image!!)
                 .addOnSuccessListener {
                     textToReceipt(it.text)
-                    Log.d("RESULT", it.text)
+
                 }
     }
 
@@ -117,27 +112,53 @@ class MainActivity : AppCompatActivity() {
         var listAll = input.split('\n')
         var prices = listAll
                 .asSequence()
-                .filter{Regex("^[0-9 ]+,[0-9]{2} (A|B)").containsMatchIn(it)}
-                .map { it.trim() }
-                .map { it.takeWhile { char -> !char.isWhitespace() } }
+                .filter{Regex("^[0-9 ]+,[ ]*[0-9]{2} [AB]").containsMatchIn(it)}
+                .map { Regex("[a-zA-Z ]").replace(it, "") }
                 .map { it.replace(',','.') }
                 .map { it.toFloat() }
                 .toList()
         var items = listAll
                 .asSequence()
-                .filter{!Regex("^[0-9 ]+,[0-9]{2} (A|B)").containsMatchIn(it)}
-                .filter{!Regex("EUR").containsMatchIn(it)}
+                .filter{!Regex("^[0-9 ]+,[ ]*[0-9]{2} [AB]").containsMatchIn(it)}
                 .filter{!Regex(" x|x ").containsMatchIn(it)}
-                .filter{!Regex("MwSt.").containsMatchIn(it)}
-                .filter{Regex("[a-z]").containsMatchIn(it)}
+                .filter{!Regex("Stk").containsMatchIn(it)}
+                .filter{!Regex("MwSt.").containsMatchIn(it)} //BAD AD-HOC STUFF
+                .filter{Regex("[a-zA-Z]").containsMatchIn(it)}
+                .map { it.trim() }
+                .map { str -> str.dropWhile { it.isDigit() } }
                 .map { it.trim() }
                 .toList()
-        items = items.subList(4, prices.size + 4)
 
+        var indexEUR = items.indexOf("EUR")
+        var indexUIDnr = items.indexOfFirst { Regex("UID Nr").containsMatchIn(it) }
+        if (indexUIDnr == -1) indexUIDnr = 9000
+        var startIndex = minOf(indexEUR, indexUIDnr)
+        items = if (startIndex == indexUIDnr) {
+            items.subList(startIndex + 1, startIndex + 2 + prices.size)
+        } else {
+            items.subList(startIndex + 1, startIndex + 1 + prices.size)
+        }
+
+        items = items.filterNot { (it == "EUR") }
+
+
+
+
+//        var rawPrices = listAll.filter{Regex("^[0-9 ]+,[ ]*[0-9]{2} [AB]").containsMatchIn(it)}
+//        var rawItems = listAll.filter{!Regex("^[0-9 ]+,[ ]*[0-9]{2} [AB]").containsMatchIn(it)}
+//        Log.d("OCR_DATA", listAll.toString())
+//        Log.d("OCR_DATA", rawItems.toString())
+//        Log.d("OCR_DATA", rawPrices.toString())
+//        Log.d("OCR_DATA", items.toString())
+//        Log.d("OCR_DATA", prices.toString())
         receiptRepository.addReceipt(Receipt(title = items[0],
                 items = items.toMutableList(),
-                prices = prices.toMutableList()))
+                prices = prices.toMutableList())
+        )
+
+
         }
+
 
 }
 
