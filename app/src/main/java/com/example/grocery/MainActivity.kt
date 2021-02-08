@@ -112,14 +112,15 @@ class MainActivity : AppCompatActivity() {
         var listAll = input.split('\n')
         var prices = listAll
                 .asSequence()
-                .filter{Regex("^[0-9 ]+,[ ]*[0-9]{2} [AB]").containsMatchIn(it)}
+                .filter{Regex("^[0-9 ]+,[ ]*[0-9]{2} ([AB]|[12])").containsMatchIn(it)}
+
                 .map { Regex("[a-zA-Z ]").replace(it, "") }
                 .map { it.replace(',','.') }
                 .map { it.toFloat() }
                 .toList()
         var items = listAll
                 .asSequence()
-                .filter{!Regex("^[0-9 ]+,[ ]*[0-9]{2} [AB]").containsMatchIn(it)}
+                .filter{!Regex("^[0-9 ]+,[ ]*[0-9]{2} ([AB]|[12])").containsMatchIn(it)}
                 .filter{!Regex(" x|x ").containsMatchIn(it)}
                 .filter{!Regex("Stk").containsMatchIn(it)}
                 .filter{!Regex("MwSt.").containsMatchIn(it)} //BAD AD-HOC STUFF
@@ -141,11 +142,8 @@ class MainActivity : AppCompatActivity() {
 
         items = items.filterNot { (it == "EUR") }
 
-
-
-
-//        var rawPrices = listAll.filter{Regex("^[0-9 ]+,[ ]*[0-9]{2} [AB]").containsMatchIn(it)}
-//        var rawItems = listAll.filter{!Regex("^[0-9 ]+,[ ]*[0-9]{2} [AB]").containsMatchIn(it)}
+//        var rawPrices = listAll.filter{Regex("^[0-9 ]+,[ ]*[0-9]{2} ([AB]|[12])").containsMatchIn(it)}
+//        var rawItems = listAll.filter{!Regex("^[0-9 ]+,[ ]*[0-9]{2} ([AB]|[12])").containsMatchIn(it)}
 //        Log.d("OCR_DATA", listAll.toString())
 //        Log.d("OCR_DATA", rawItems.toString())
 //        Log.d("OCR_DATA", rawPrices.toString())
@@ -155,11 +153,7 @@ class MainActivity : AppCompatActivity() {
                 items = items.toMutableList(),
                 prices = prices.toMutableList())
         )
-
-
         }
-
-
 }
 
 
