@@ -17,7 +17,9 @@ import androidx.core.app.ActivityCompat
 import com.example.grocery.data.Receipt
 import com.example.grocery.receiptList.ReceiptListActivity
 import com.google.mlkit.vision.common.InputImage
+import com.google.mlkit.vision.text.Text
 import com.google.mlkit.vision.text.TextRecognition
+import kotlin.math.abs
 
 
 class MainActivity : AppCompatActivity() {
@@ -103,17 +105,16 @@ class MainActivity : AppCompatActivity() {
         val recognizer = TextRecognition.getClient()
         recognizer.process(image!!)
                 .addOnSuccessListener {
-                    textToReceipt(it.text)
-
+//                    textToReceipt(it.text)
+                    textToReceiptUsingHeight(it)
                 }
     }
 
     private fun textToReceipt(input: String) {
-        var listAll = input.split('\n')
-        var prices = listAll
+        val listAll = input.split('\n')
+        val prices = listAll
                 .asSequence()
                 .filter{Regex("^[0-9 ]+,[ ]*[0-9]{2} ([AB]|[12])").containsMatchIn(it)}
-
                 .map { Regex("[a-zA-Z ]").replace(it, "") }
                 .map { it.replace(',','.') }
                 .map { it.toFloat() }
@@ -128,12 +129,13 @@ class MainActivity : AppCompatActivity() {
                 .map { it.trim() }
                 .map { str -> str.dropWhile { it.isDigit() } }
                 .map { it.trim() }
+                .filter { it.length > 2 }
                 .toList()
 
-        var indexEUR = items.indexOf("EUR")
+        val indexEUR = items.indexOf("EUR")
         var indexUIDnr = items.indexOfFirst { Regex("UID Nr").containsMatchIn(it) }
         if (indexUIDnr == -1) indexUIDnr = 9000
-        var startIndex = minOf(indexEUR, indexUIDnr)
+        val startIndex = minOf(indexEUR, indexUIDnr)
         items = if (startIndex == indexUIDnr) {
             items.subList(startIndex + 1, startIndex + 2 + prices.size)
         } else {
@@ -142,19 +144,83 @@ class MainActivity : AppCompatActivity() {
 
         items = items.filterNot { (it == "EUR") }
 
-//        var rawPrices = listAll.filter{Regex("^[0-9 ]+,[ ]*[0-9]{2} ([AB]|[12])").containsMatchIn(it)}
-//        var rawItems = listAll.filter{!Regex("^[0-9 ]+,[ ]*[0-9]{2} ([AB]|[12])").containsMatchIn(it)}
-//        Log.d("OCR_DATA", listAll.toString())
-//        Log.d("OCR_DATA", rawItems.toString())
-//        Log.d("OCR_DATA", rawPrices.toString())
-//        Log.d("OCR_DATA", items.toString())
-//        Log.d("OCR_DATA", prices.toString())
+        val rawPrices = listAll.filter{Regex("^[0-9 ]+,[ ]*[0-9]{2} ([AB]|[12])").containsMatchIn(it)}
+        val rawItems = listAll.filter{!Regex("^[0-9 ]+,[ ]*[0-9]{2} ([AB]|[12])").containsMatchIn(it)}
+        Log.d("OCR_DATA", listAll.toString())
+        Log.d("OCR_DATA", rawItems.toString())
+        Log.d("OCR_DATA", rawPrices.toString())
+        Log.d("OCR_DATA", items.toString())
+        Log.d("OCR_DATA", prices.toString())
         receiptRepository.addReceipt(Receipt(title = items[0],
                 items = items.toMutableList(),
                 prices = prices.toMutableList())
         )
         }
+
+    private fun textToReceiptUsingHeight(input: Text) {
+
+        val prices = emptyList<List<Double>>().toMutableList() //list of line-data in form [blocknumber, linenumber, height, price]
+        val items = emptyList<List<Double>>().toMutableList() //list of line-data in form [blocknumber, linenumber, height]
+        var blockCounter = 0
+        for (block in input.textBlocks) {
+
+            var lineCounter = 0
+            for (line in block.lines) {
+
+                var y = 0.0
+                line.cornerPoints?.forEach { y += it.y }
+                y /= 4
+
+
+                if (Regex("^[0-9 ]+,[ ]*[0-9]{2} ([AB]|[12])").containsMatchIn(line.text)) {
+
+                    prices.add(listOf(blockCounter.toDouble(),
+                            lineCounter.toDouble(),
+                            y,
+                            Regex("[a-zA-Z ]").replace(line.text, "")
+                                    .replace(',','.')
+                                    .toDouble()))
+                } else {
+                    items.add(listOf(blockCounter.toDouble(),
+                            lineCounter.toDouble(),
+                            y))
+                }
+                lineCounter += 1
+            }
+            blockCounter += 1
+        }
+
+        val formattedItems = emptyList<String>().toMutableList()
+
+        for (price in prices) {
+
+            var closest = emptyList<Int>()
+            var min = Double.MAX_VALUE
+
+            for (item in items) {
+                val diff = abs(item[2]-price[2])
+                if (min > diff && (price[0] != item[0] || price[1] != item[1])) {
+                    min = diff
+                    closest = listOf(item[0].toInt(), item[1].toInt())
+                }
+            }
+
+            formattedItems.add(input.textBlocks[closest[0]].lines[closest[1]].text
+                    .trim()
+                    .dropWhile { it.isDigit() }
+                    .trim())
+
+        }
+        val pricesFinal = emptyList<Float>().toMutableList()
+
+        for (p in prices) {
+            pricesFinal.add(p[3].toFloat())
+        }
+
+        receiptRepository.addReceipt(Receipt(title = formattedItems[0],
+                items = formattedItems.toMutableList(),
+                prices = pricesFinal)
+        )
+
+    }
 }
-
-
-
