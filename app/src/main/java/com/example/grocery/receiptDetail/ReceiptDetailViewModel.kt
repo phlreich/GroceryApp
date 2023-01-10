@@ -1,12 +1,10 @@
 package com.example.grocery.receiptDetail
 
-import android.content.Context
+
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
-import com.example.grocery.ReceiptRepository
-import java.util.*
+import com.example.grocery.DataRepository
 
 class ReceiptDetailViewModel() : ViewModel() {
 
-    fun receiptLiveData() = ReceiptRepository.get()
+    fun receiptLiveData() = DataRepository.get()
 }

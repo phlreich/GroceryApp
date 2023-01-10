@@ -6,7 +6,6 @@ import android.os.Bundle
 import androidx.activity.viewModels
 import androidx.recyclerview.widget.RecyclerView
 import com.example.grocery.R
-import com.example.grocery.data.Receipt
 import java.util.*
 
 const val RECEIPT_ID = "receipt id"
@@ -19,6 +18,10 @@ class ReceiptDetailActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_receipt_detail_view)
+
+        val actionBar = supportActionBar
+        actionBar!!.title = "Scanned receipt"
+        actionBar.setDefaultDisplayHomeAsUpEnabled(true)
 
         val itemAdapter = ReceiptDetailAdapter()
         val itemRecyclerView: RecyclerView = findViewById(R.id.item_recycler_view_detail)
@@ -37,15 +40,5 @@ class ReceiptDetailActivity : AppCompatActivity() {
                 itemAdapter.submitList(itemList)
             }
         })
-    }
-
-    private fun getContents(receipt: Receipt){
-
-    }
-
-    private fun adapterOnClick(receipt: Pair<String, Float>) {
-//        val intent = Intent(this, someActivity::class.java)
-//        intent.putExtra()
-//        startActivity(intent)
     }
 }

@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "107637405776",
+    "project_id": "frontend-ocr",
+    "storage_bucket": "frontend-ocr.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:107637405776:android:839ea9f2dd8c5a7cfc3955",
+        "android_client_info": {
+          "package_name": "com.example.pages"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "107637405776-aekpsu38qrjikcaci61ilvmldkvf2rrp.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB3eQBIxc1IOzmyWsspNmi3BMXhxRsUe0k"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "107637405776-aekpsu38qrjikcaci61ilvmldkvf2rrp.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

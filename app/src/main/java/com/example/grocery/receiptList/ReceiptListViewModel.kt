@@ -1,13 +1,12 @@
 package com.example.grocery.receiptList
 
 import androidx.lifecycle.ViewModel
-import com.example.grocery.ReceiptRepository
-import com.example.grocery.data.Receipt
+import com.example.grocery.DataRepository
 
 class ReceiptListViewModel : ViewModel() {
 
-    private val receiptRepository = ReceiptRepository.get()
-    val receiptListLiveData = receiptRepository.getReceipts()
+    private val dataRepository = DataRepository.get()
+    val receiptListLiveData = dataRepository.getReceipts()
 
 }
 

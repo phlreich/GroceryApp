@@ -28,19 +28,12 @@ class ReceiptDetailAdapter() : //private val itemList: List<Pair<String, Float>>
         }
     }
 
-    // Returns a new ViewHolder
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ReceiptDetailViewHolder {
         val view = LayoutInflater.from(parent.context)
                 .inflate(R.layout.receipt_item, parent, false)
 
         return ReceiptDetailViewHolder(view)
     }
-
-    // Returns size of data list
-//    override fun getItemCount(): Int {
-//        return receipts.size
-//    }
-
     override fun onBindViewHolder(holder: ReceiptDetailViewHolder, position: Int) {
         holder.bind(getItem(position))
     }

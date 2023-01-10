@@ -2,36 +2,59 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.grocery">
 
-    <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-    <uses-permission android:name="android.permission.EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.CAMERA" />
-
-    <uses-feature android:name="android.hardware.camera.any" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.INTERNET" />
 
     <application
+        android:installLocation="internalOnly"
         android:name=".GroceryApplication"
+        android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Grocery">
-
-        <activity android:name=".receiptDetail.ReceiptDetailActivity" />
-        <activity android:name=".receiptList.ReceiptListActivity" />
-        <activity android:name=".MainActivity">
+        <activity android:name=".shoppingListDetail.ShoppingListDetailActivity"
+            android:parentActivityName=".shoppingListList.ShoppingListListActivity"></activity>
+        <activity
+            android:name=".shoppingListList.ShoppingListListActivity"
+            android:parentActivityName="com.example.grocery.MainActivity"
+            android:screenOrientation="portrait"/>
+        <activity
+            android:name=".RegisterActivity"
+            android:parentActivityName=".LoginActivity"
+            android:screenOrientation="portrait"/>
+        <activity
+            android:name=".receiptDetail.ReceiptDetailActivity"
+            android:parentActivityName=".receiptList.ReceiptListActivity"
+            android:screenOrientation="portrait"/>
+        <activity
+            android:name=".receiptList.ReceiptListActivity"
+            android:parentActivityName="com.example.grocery.MainActivity"
+            android:screenOrientation="portrait"/>
+        <activity
+            android:name=".LoginActivity"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name="com.example.grocery.Profile"
+            android:parentActivityName="com.example.grocery.MainActivity"
+            android:screenOrientation="portrait"/>
 
+
+        <activity
+            android:name="com.example.grocery.MainActivity"
+            android:screenOrientation="portrait"></activity>
 
         <meta-data
             android:name="com.google.mlkit.vision.DEPENDENCIES"
             android:value="ocr" />
-
     </application>
 
 </manifest>
